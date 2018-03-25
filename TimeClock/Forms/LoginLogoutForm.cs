@@ -54,7 +54,7 @@ namespace TimeClock.Forms
             timer2.Start();
             this.Hide();
             state = true;
-            sm.state = state;
+            sm.loggedIn = state;
            
         }
 
@@ -82,7 +82,7 @@ namespace TimeClock.Forms
             //timer2.Start();
             this.Hide();
             state = false;
-            sm.state = state;
+            sm.loggedIn = state;
         }
     }
 }

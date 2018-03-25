@@ -14,7 +14,7 @@ namespace TimeClock.Models
         public string pass { get; set; }
 
         //State (Logged In or Logged Out
-        public bool state { get; set; }
+        public bool loggedIn { get; set; }
 
         public StaffModel()
         {
@@ -25,7 +25,7 @@ namespace TimeClock.Models
         {
             name = fName;           
             pass = p;
-            state = torf;
+            loggedIn = torf;
         }
     }
 }

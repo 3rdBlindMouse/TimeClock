@@ -18,5 +18,6 @@ namespace TimeClock.DataAccess
         StaffModel getStaffModel(String name);
         void NewPassword(StaffModel model);
         void Login(StaffModel model);
+        void Logout(StaffModel model);
     }
 }

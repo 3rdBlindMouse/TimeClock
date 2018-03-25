@@ -106,8 +106,9 @@ namespace TimeClock
             welcomeLabel.Text = pass.Length.ToString();
             if(pass.Length == 4)
             {
-                if ((pass.ToString() == "1111") && (sm.pass == "1111"))
-                {
+                //if ((pass.ToString() == "1111") && (sm.pass == "1111"))
+                    if (sm.pass == "1111")
+                    {
                     ChangePinNumPad newPin = new ChangePinNumPad(sm);
                     this.Close();
                     newPin.ShowDialog();
@@ -121,9 +122,9 @@ namespace TimeClock
             if(SecurePasswordHasher.Verify(pass.ToString(), sm.pass))
             {
                 //MessageBox.Show("Success");
-                //LoginLogoutForm lf = new LoginLogoutForm(sm);
+                
                 this.Close();
-                //lf.ShowDialog();
+                
                 passwordValid = true;
             }
             else

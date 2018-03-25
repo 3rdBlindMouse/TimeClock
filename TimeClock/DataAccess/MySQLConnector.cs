@@ -58,6 +58,18 @@ namespace TimeClock.DataAccess
             }
         }
 
+        public void Logout(StaffModel model)
+        {
+            using (IDbConnection connection = new MySqlConnection(GlobalConfig.CnnString(db)))
+            {
+                var p = new DynamicParameters();
+                p.Add("@InStaffID", model.staffID);
+
+                connection.Execute("spLogoutStaff", p, commandType: CommandType.StoredProcedure);
+
+            }
+        }
+
         public void NewPassword(StaffModel model)
         {
             using (IDbConnection connection = new MySqlConnection(GlobalConfig.CnnString(db)))
