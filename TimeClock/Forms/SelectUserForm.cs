@@ -20,8 +20,8 @@ namespace TimeClock
             InitializeComponent();
             //checkloggedIn();
             this.TopMost = true;
-            //this.FormBorderStyle = FormBorderStyle.None;
-            //this.WindowloggedIn = FormWindowloggedIn.Maximized;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
             IntPtr intPtr = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
             EdgeGestureUtil.DisableEdgeGestures(intPtr, true);
         }
