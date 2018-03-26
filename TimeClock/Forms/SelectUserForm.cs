@@ -15,10 +15,21 @@ namespace TimeClock
 
         private static StaffModel staffModel = new StaffModel();
 
+
+        List<Button> buttons = new List<Button>();
+        List<StaffModel> staff = new List<StaffModel>();
+        Dictionary<Button, StaffModel> buttonStaff = new Dictionary<Button, StaffModel>();
+
+
         public SelectUserForm()
         {
             InitializeComponent();
-            //checkloggedIn();
+            buttons = new List<Button> { button1, button2, button3, button4, button5, button6, button7, button8 };
+            staff = GlobalConfig.Connection.getStaff();
+
+            buttonStaff = fillDictionary(buttons, staff);
+
+            //TO DO Create Button/StaffModel Dict.           
             this.TopMost = true;
             this.FormBorderStyle = FormBorderStyle.None;
             this.WindowState = FormWindowState.Maximized;
@@ -26,40 +37,53 @@ namespace TimeClock
             EdgeGestureUtil.DisableEdgeGestures(intPtr, true);
         }
 
-        //public void checkloggedIn()
+        private Dictionary<Button, StaffModel> fillDictionary(List<Button> buttons, List<StaffModel> staff)
+        {
+            var x = new Dictionary<Button, StaffModel>();
+
+            for (int i = 0; i < buttons.Capacity; i ++)
+            {
+                x.Add(buttons[i], staff[i]);
+                Button b = buttons[i];
+                StaffModel s = staff[i];
+                b.Text = ($"-- { s.name} --");
+                if(s.loggedIn == true)
+                {
+                    b.BackColor = Color.DodgerBlue;
+                    b.ForeColor = Color.Ivory;
+                }
+            }
+            return x;
+        }
+
+        
+
+
+        ////Set event handler
+        //private void SelectUserForm_Load(object sender, EventArgs e)
         //{
-        //    if(tania.loggedIn == false)
+        //    SystemEvents.DisplaySettingsChanged +=
+        //        new EventHandler(displaySettingsChanged);
+        //}
+        //// Event handler for the system's DisplaySettingsChanged event.
+        //// Detect and then compare the height and width of the screen.
+        //private void displaySettingsChanged(object sender, EventArgs e)
+        //{
+        //    Rectangle theScreenRect = Screen.GetBounds(this);
+
+        //    if (theScreenRect.Height > theScreenRect.Width)
         //    {
-        //        button1.BackColor = Color.Beige;
+        //        //Run the application in portrait, as in:
+        //        MessageBox.Show("Run in portrait.");
+        //    }
+        //    else
+        //    {
+        //        //Run the application in landscape, as in:
+        //        MessageBox.Show("Run in landscape.");
         //    }
         //}
 
-
-        //Set event handler
-        private void SelectUserForm_Load(object sender, EventArgs e)
-        {
-            SystemEvents.DisplaySettingsChanged +=
-                new EventHandler(displaySettingsChanged);
-        }
-        // Event handler for the system's DisplaySettingsChanged event.
-        // Detect and then compare the height and width of the screen.
-        private void displaySettingsChanged(object sender, EventArgs e)
-        {
-            Rectangle theScreenRect = Screen.GetBounds(this);
-
-            if (theScreenRect.Height > theScreenRect.Width)
-            {
-                //Run the application in portrait, as in:
-                MessageBox.Show("Run in portrait.");
-            }
-            else
-            {
-                //Run the application in landscape, as in:
-                MessageBox.Show("Run in landscape.");
-            }
-        }
-
-      private void validateStaff(Button but, StaffModel model)
+        private void validateStaff(Button but, StaffModel model)
         {
             NumPad numPad = new NumPad(model);
             numPad.ShowDialog();

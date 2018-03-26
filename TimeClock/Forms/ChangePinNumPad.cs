@@ -184,5 +184,12 @@ namespace TimeClock
         {
             unfillBoxes();
         }
+
+        private void ChangePinNimPad_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason != CloseReason.FormOwnerClosing)
+                this.Owner.Close();
+        }
+
     }
 }

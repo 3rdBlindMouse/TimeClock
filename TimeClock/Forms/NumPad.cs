@@ -107,13 +107,18 @@ namespace TimeClock
             if(pass.Length == 4)
             {
                 //if ((pass.ToString() == "1111") && (sm.pass == "1111"))
-                    if (sm.pass == "1111")
+                    if (sm.pass == "$MYHASH$V1$10000$KEuCVy2zLizbwbYSFMYg9W7UMjJNGfhQStw9jtJLaWK3uCHz")
                     {
                     ChangePinNumPad newPin = new ChangePinNumPad(sm);
-                    this.Close();
+                    
                     newPin.ShowDialog();
+                    this.Close();                     
                 }
-                checkPasswordsMatch(pass);
+                else
+                {
+                    checkPasswordsMatch(pass);
+                }
+                
             }
         }
 
