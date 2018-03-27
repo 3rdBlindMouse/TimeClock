@@ -8,7 +8,7 @@ namespace TimeClock.Models
 {
     public class StaffModel
     {
-        public string staffID { get; set; }
+        public int staffID { get; set; }
         // FirstName
         public string name { get; set; }      
         public string pass { get; set; }

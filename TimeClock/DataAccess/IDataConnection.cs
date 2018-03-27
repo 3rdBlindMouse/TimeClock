@@ -19,5 +19,7 @@ namespace TimeClock.DataAccess
         void NewPassword(StaffModel model);
         void Login(StaffModel model);
         void Logout(StaffModel model);
+        ShiftModel CreateShift(ShiftModel shift);
+        void LogoutShift(ShiftModel model);
     }
 }

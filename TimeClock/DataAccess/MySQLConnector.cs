@@ -12,6 +12,28 @@ namespace TimeClock.DataAccess
     {
         private const string db = "millertimesheet";
 
+        public ShiftModel CreateShift(ShiftModel model)
+        {
+
+            using (IDbConnection connection = new MySqlConnection(GlobalConfig.CnnString(db)))
+            {
+                var p = new DynamicParameters();
+                p.Add("@ShiftID", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
+                p.Add("@InStaffID", model.StaffID);
+                p.Add("@InLoginTime", model.LoginTime);
+                connection.Execute("spCreateShift", p, commandType: CommandType.StoredProcedure);
+
+
+                // grabs newly created ID from database and returns it as part of the current Person Model
+                // https://stackoverflow.com/questions/13151861/fetch-last-inserted-id-form-stored-procedure-in-mysql
+                var id = p.Get<int?>("ShiftID");
+                model.ShiftID = Convert.ToInt32(id);
+
+                return model;
+            }
+
+        }
+
         public StaffModel CreateStaffModel(StaffModel model)
         {
             throw new NotImplementedException();
@@ -66,6 +88,19 @@ namespace TimeClock.DataAccess
                 p.Add("@InStaffID", model.staffID);
 
                 connection.Execute("spLogoutStaff", p, commandType: CommandType.StoredProcedure);
+
+            }
+        }
+
+        public void LogoutShift(ShiftModel model)
+        {
+            using (IDbConnection connection = new MySqlConnection(GlobalConfig.CnnString(db)))
+            {
+                var p = new DynamicParameters();
+                p.Add("@InStaffID", model.StaffID);
+                p.Add("@InLogoutTime", model.LogoutTime);
+
+                connection.Execute("spLogoutShift", p, commandType: CommandType.StoredProcedure);
 
             }
         }

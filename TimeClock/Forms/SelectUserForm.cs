@@ -16,9 +16,15 @@ namespace TimeClock
         private static StaffModel staffModel = new StaffModel();
 
 
-        List<Button> buttons = new List<Button>();
-        List<StaffModel> staff = new List<StaffModel>();
-        Dictionary<Button, StaffModel> buttonStaff = new Dictionary<Button, StaffModel>();
+        private static List<Button> buttons = new List<Button>();
+        private static List<StaffModel> staff = new List<StaffModel>();
+        private static Dictionary<Button, StaffModel> buttonStaff = new Dictionary<Button, StaffModel>();
+
+        // used for clock
+        Timer timer1 = new Timer();
+
+
+        ShiftModel shift = new ShiftModel();
 
 
         public SelectUserForm()
@@ -31,12 +37,43 @@ namespace TimeClock
 
             //TO DO Create Button/StaffModel Dict.           
             this.TopMost = true;
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.WindowState = FormWindowState.Maximized;
+            //this.FormBorderStyle = FormBorderStyle.None;
+            //this.WindowState = FormWindowState.Maximized;
             IntPtr intPtr = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
             EdgeGestureUtil.DisableEdgeGestures(intPtr, true);
+
+            doClockStuff();
+            
         }
 
+        private void doClockStuff()
+        {
+            clockButton.Enabled = false;
+            clockButton.ForeColor = Color.Black;
+            clockButton.Paint += button_Paint;
+
+            clockButton.FlatAppearance.BorderSize = 0;
+
+            //clockButton.FlatAppearance.MouseOverBackColor = clockButton.BackColor;
+            //clockButton.BackColorChanged += (s, e) =>
+            //{
+            //    clockButton.FlatAppearance.MouseOverBackColor = clockButton.BackColor;
+            //};
+
+            // Clock display
+            this.clockButton.Text = DateTime.Now.ToString();
+            timer1.Tick += new EventHandler(timer1_Tick);
+            this.timer1.Interval = 1000;
+            this.timer1.Enabled = true;
+        }
+
+        /// <summary>
+        /// Populates Dictionary with Buttons as Keys and StaffModels as values
+        /// Checks to see if staffModel is logged in and alters button colours accordingly
+        /// </summary>
+        /// <param name="buttons"></param>
+        /// <param name="staff"></param>
+        /// <returns></returns>
         private Dictionary<Button, StaffModel> fillDictionary(List<Button> buttons, List<StaffModel> staff)
         {
             var x = new Dictionary<Button, StaffModel>();
@@ -56,32 +93,6 @@ namespace TimeClock
             return x;
         }
 
-        
-
-
-        ////Set event handler
-        //private void SelectUserForm_Load(object sender, EventArgs e)
-        //{
-        //    SystemEvents.DisplaySettingsChanged +=
-        //        new EventHandler(displaySettingsChanged);
-        //}
-        //// Event handler for the system's DisplaySettingsChanged event.
-        //// Detect and then compare the height and width of the screen.
-        //private void displaySettingsChanged(object sender, EventArgs e)
-        //{
-        //    Rectangle theScreenRect = Screen.GetBounds(this);
-
-        //    if (theScreenRect.Height > theScreenRect.Width)
-        //    {
-        //        //Run the application in portrait, as in:
-        //        MessageBox.Show("Run in portrait.");
-        //    }
-        //    else
-        //    {
-        //        //Run the application in landscape, as in:
-        //        MessageBox.Show("Run in landscape.");
-        //    }
-        //}
 
         private void validateStaff(Button but, StaffModel model)
         {
@@ -90,10 +101,6 @@ namespace TimeClock
             this.passwordValid = numPad.passwordValid;
             if (passwordValid == true)
             {
-                //LoginLogoutForm lilo = new LoginLogoutForm(tania);
-                //lilo.ShowDialog();
-                //tania.loggedIn = lilo.loggedIn;
-
                 //if logging in
                 if (model.loggedIn == false)
                 {
@@ -101,6 +108,11 @@ namespace TimeClock
                     but.ForeColor = Color.Ivory;
                     model.loggedIn = true;
                     GlobalConfig.Connection.Login(model);
+                    
+                    shift.StaffID = model.staffID;
+                    shift.LoginTime = DateTime.Now;
+                    shift.LogoutTime = null;
+                    GlobalConfig.Connection.CreateShift(shift);
                 }
                 else
                 //logging out
@@ -111,31 +123,23 @@ namespace TimeClock
                     but.BackColor = Color.White;
                     but.ForeColor = Color.DodgerBlue;
                     model.loggedIn = false;
+                    shift.LogoutTime = DateTime.Now;
+                    shift.StaffID = model.staffID;
                     GlobalConfig.Connection.Logout(model);
+                    GlobalConfig.Connection.LogoutShift(shift);
                 }
             }
-
-
-
         }
 
         private void button1_Click(object sender, EventArgs e)
         {           
-            staffModel = GlobalConfig.Connection.getStaffModel("Tania");
-            
-            validateStaff(button1, staffModel);
-            
-           
-
-
-            
-           
+            staffModel = GlobalConfig.Connection.getStaffModel("Tania");           
+            validateStaff(button1, staffModel);             
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             staffModel = GlobalConfig.Connection.getStaffModel("Robert");
-
             validateStaff(button2, staffModel);
         }
 
@@ -181,6 +185,28 @@ namespace TimeClock
         private void button9_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            this.clockButton.Text = DateTime.Now.ToString();
+        }
+
+
+
+        void button_Paint(object sender, PaintEventArgs e)
+        {
+            dynamic btn = (Button)sender;
+            dynamic drawBrush = new SolidBrush(btn.ForeColor);
+            dynamic sf = new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+            btn.Text = string.Empty;
+            e.Graphics.DrawString(DateTime.Now.ToString(), btn.Font, drawBrush, e.ClipRectangle, sf);
+            drawBrush.Dispose();
+            sf.Dispose();
         }
     }
 }
